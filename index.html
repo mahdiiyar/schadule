@@ -1,196 +1,75 @@
+<!-- frontend/index.html -->
 <!DOCTYPE html>
 <html lang="fa">
 
 <head>
-    <meta charset="UTF-8">
-    <title>برنامه‌ریزی هفتگی</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            direction: rtl;
-            background: #f2f2f2;
-            padding: 20px;
-        }
-
-        #login,
-        #planner {
-            max-width: 500px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px #ccc;
-        }
-
-        #planner {
-            display: none;
-        }
-
-        input,
-        select,
-        button {
-            margin: 5px 0;
-            padding: 8px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th,
-        td {
-            border: 1px solid #999;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .item {
-            margin: 4px 0;
-            padding: 5px;
-            border-radius: 5px;
-            color: white;
-            font-size: 0.9em;
-        }
-
-        .red {
-            background: #e74c3c;
-        }
-
-        .blue {
-            background: #3498db;
-        }
-
-        .green {
-            background: #2ecc71;
-        }
-
-        .item button {
-            background: none;
-            color: white;
-            border: none;
-            float: left;
-            cursor: pointer;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>برنامه‌ریز هفتگی</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-    <!-- Login Form -->
-    <div id="login">
+    <!-- صفحه ورود -->
+    <div id="login-box">
         <h2>ورود</h2>
         <input type="text" id="username" placeholder="نام کاربری">
         <input type="password" id="password" placeholder="رمز عبور">
-        <button onclick="login()">ورود</button>
-        <p id="loginError" style="color:red;"></p>
+        <button id="login-btn">ورود</button>
+        <p id="login-error" class="error"></p>
     </div>
 
-    <!-- Weekly Planner -->
-    <div id="planner">
+    <!-- صفحه تقویم -->
+    <div id="planner-box" style="display:none;">
         <h2>برنامه‌ریز هفتگی</h2>
-        <select id="day">
-            <option value="شنبه">شنبه</option>
-            <option value="یکشنبه">یکشنبه</option>
-            <option value="دوشنبه">دوشنبه</option>
-            <option value="سه‌شنبه">سه‌شنبه</option>
-            <option value="چهارشنبه">چهارشنبه</option>
-            <option value="پنجشنبه">پنجشنبه</option>
-            <option value="جمعه">جمعه</option>
-        </select>
-        <input type="text" id="task" placeholder="عنوان برنامه">
-        <input type="text" id="time" placeholder="مثلاً 14:00">
-        <select id="color">
-            <option value="red">کار</option>
-            <option value="blue">درس</option>
-            <option value="green">آزاد</option>
-        </select>
-        <button onclick="addTask()">افزودن برنامه</button>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>روز</th>
-                    <th>برنامه‌ها</th>
-                </tr>
-            </thead>
-            <tbody id="schedule"></tbody>
-        </table>
+        <!-- به‌روزرسانی فرم اضافه‌کردن برنامه -->
+        <div class="form-row">
+            <select id="day">
+                <option value="شنبه">شنبه</option>
+                <option value="یکشنبه">یکشنبه</option>
+                <option value="دوشنبه">دوشنبه</option>
+                <option value="سه‌شنبه">سه‌شنبه</option>
+                <option value="چهارشنبه">چهارشنبه</option>
+                <option value="پنجشنبه">پنجشنبه</option>
+                <option value="جمعه">جمعه</option>
+            </select>
+
+            <select id="start-hour"></select>
+            <select id="start-minute">
+                <option value="00">00</option>
+                <option value="30">30</option>
+            </select>
+
+            <span>تا</span>
+
+            <select id="end-hour"></select>
+            <select id="end-minute">
+                <option value="00">00</option>
+                <option value="30">30</option>
+            </select>
+
+            <input type="text" id="task" placeholder="عنوان برنامه">
+            <select id="color">
+                <option value="red">کار</option>
+                <option value="blue">درس</option>
+                <option value="green">آزاد</option>
+            </select>
+
+            <button id="add-btn">افزودن</button>
+        </div>
+
+
+        <!-- جایگزین کردن این بخش -->
+        <div id="calendar-container">
+            <div id="calendar-grid"></div>
+            <div id="calendar-overlay"></div> <!-- لایه‌ای که برنامه‌ها روی اون قرار می‌گیرن -->
+        </div>
+
     </div>
 
-    <script>
-        const correctUsername = "mahdiiyar";
-        const correctPassword = "admin@moh";
-
-        function login() {
-            const u = document.getElementById("username").value;
-            const p = document.getElementById("password").value;
-            if (u === correctUsername && p === correctPassword) {
-                document.getElementById("login").style.display = "none";
-                document.getElementById("planner").style.display = "block";
-                loadSchedule();
-            } else {
-                document.getElementById("loginError").innerText = "نام کاربری یا رمز اشتباه است";
-            }
-        }
-
-        function loadSchedule() {
-            const data = JSON.parse(localStorage.getItem("weeklyPlanner") || "{}");
-            const tbody = document.getElementById("schedule");
-            tbody.innerHTML = "";
-            const days = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
-            days.forEach(day => {
-                const row = document.createElement("tr");
-                const dayCell = document.createElement("td");
-                dayCell.innerText = day;
-                const tasksCell = document.createElement("td");
-
-                (data[day] || []).forEach((item, index) => {
-                    const div = document.createElement("div");
-                    div.className = `item ${item.color}`;
-                    div.innerHTML = `${item.time} - ${item.task} <button onclick="removeTask('${day}', ${index})">✖</button>`;
-                    tasksCell.appendChild(div);
-                });
-
-                row.appendChild(dayCell);
-                row.appendChild(tasksCell);
-                tbody.appendChild(row);
-            });
-        }
-
-        function addTask() {
-            const day = document.getElementById("day").value;
-            const task = document.getElementById("task").value;
-            const time = document.getElementById("time").value;
-            const color = document.getElementById("color").value;
-
-            if (!task || !time) {
-                alert("لطفاً عنوان و ساعت برنامه را وارد کنید.");
-                return;
-            }
-
-            const data = JSON.parse(localStorage.getItem("weeklyPlanner") || "{}");
-            if (!data[day]) data[day] = [];
-            data[day].push({ task, time, color });
-            localStorage.setItem("weeklyPlanner", JSON.stringify(data));
-            loadSchedule();
-            document.getElementById("task").value = "";
-            document.getElementById("time").value = "";
-        }
-
-        function removeTask(day, index) {
-            const data = JSON.parse(localStorage.getItem("weeklyPlanner") || "{}");
-            if (data[day]) {
-                data[day].splice(index, 1);
-                localStorage.setItem("weeklyPlanner", JSON.stringify(data));
-                loadSchedule();
-            }
-        }
-    </script>
-
+    <script src="script.js"></script>
 </body>
 
 </html>

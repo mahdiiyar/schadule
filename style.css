@@ -1,0 +1,163 @@
+/* frontend/style.css */
+
+:root {
+    --hour-width: 60px;
+    --row-height: 60px;
+}
+
+body {
+    direction: rtl;
+    font-family: sans-serif;
+    background: #f9f9f9;
+    padding: 20px;
+    margin: 0;
+}
+
+#login-box {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #ccc;
+}
+
+#planner-box {
+    /* در صورت نیاز می‌توانید استایل اضافه کنید */
+}
+
+input,
+select,
+button {
+    padding: 8px;
+    margin: 5px;
+    font-size: 14px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.error {
+    color: red;
+    font-size: 0.9em;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+
+#calendar-container {
+    direction: rtl;
+    position: relative;
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 20px;
+}
+
+#calendar-grid {
+    display: grid;
+    grid-template-columns: 100px repeat(20, var(--hour-width));
+    grid-template-rows: 40px repeat(7, var(--row-height));
+    position: relative;
+    z-index: 1;
+    width: calc(100px + 20 * var(--hour-width));
+    height: calc(40px + 7 * var(--row-height));
+    box-sizing: border-box;
+}
+
+.header-cell {
+    background: #eee;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #ddd;
+    line-height: 40px;
+    box-sizing: border-box;
+}
+
+.row-label {
+    background: #f0f0f0;
+    text-align: center;
+    font-weight: bold;
+    line-height: var(--row-height);
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.cell {
+    border: 1px solid #ddd;
+    height: var(--row-height);
+    box-sizing: border-box;
+}
+
+#calendar-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(100px + 20 * var(--hour-width));
+    height: calc(40px + 7 * var(--row-height));
+    z-index: 2;
+    pointer-events: none;
+    /* برنامه‌ها جدول رو بلاک نکنن */
+}
+
+.activity-block {
+    position: absolute;
+    height: var(--row-height);
+    /* padding: 6px 6px; */
+    border-radius: 6px;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    white-space: normal;
+    line-height: 1.2;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s;
+    text-align: right;
+    pointer-events: auto;
+    /* فقط خود بلاک کلیک‌پذیر باشه */
+}
+
+.activity-block:hover {
+    filter: brightness(1.1);
+}
+
+.activity-title {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 4px;
+    margin: auto;
+    margin-top: 12px;
+
+}
+
+.activity-time {
+    font-size: 11px;
+    opacity: 0.9;
+    margin: auto;
+    margin-bottom: 12px;
+
+}
+
+/* رنگ‌های فعالیت */
+.red {
+    background-color: #e74c3c;
+}
+
+.blue {
+    background-color: #3498db;
+}
+
+.green {
+    background-color: #2ecc71;
+}
